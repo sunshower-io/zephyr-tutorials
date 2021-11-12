@@ -12,9 +12,8 @@
       <username>packages</username>
       <password>${ENV.ZEPHYR_REPO_PASSWORD}</password>
     </server>
-
-
   </servers>
+
   <profiles>
     <profile>
       <id>github</id>

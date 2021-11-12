@@ -1,0 +1,12 @@
+
+war {
+    manifest {
+        attributes(
+                'group': 'io.zephyr.tutorials',
+                'name': 'hello-world',
+                'version': '1.0.0-SNAPSHOT',
+                'description': 'just a test plugin!',
+                'type': 'plugin'
+        )
+    }
+}
