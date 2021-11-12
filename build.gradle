@@ -6,9 +6,23 @@ plugins {
 allprojects {
     apply plugin: "io.spring.dependency-management"
 
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            url = "https://maven.pkg.github.com/sunshower-io/"
+            credentials {
+                username 'packages'
+                password "$repoAccessToken" // in gradle.properties
+            }
+        }
+    }
+
+
     dependencyManagement {
         imports {
-            mavenBom "io.zephyr:bom-imported:$zephyrVersion"
+            mavenBom "io.zephyr.tutorials:zephyr-tutorials:$zephyrVersion"
         }
     }
 }
@@ -19,7 +33,7 @@ subprojects {
 
     
     dependencies {
-        compileOnly 'io.zephyr:kernel-api'
+        compileOnly "io.zephyr:kernel-api"
     }
     
 }
