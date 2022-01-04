@@ -7,6 +7,7 @@ dependencies {
     ].each {
         implementation it
     }
+    implementation 'javax.inject:javax.inject:1'
 
 
     implementation 'org.springframework.boot:spring-boot-starter'
