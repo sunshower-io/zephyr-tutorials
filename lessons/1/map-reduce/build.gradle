@@ -1,0 +1,26 @@
+dependencies {
+
+    [
+            'io.zephyr:gyre-api',
+            'io.zephyr:kernel-api',
+            'io.zephyr:kernel-core'
+    ].each {
+        implementation it
+    }
+
+
+    implementation 'org.springframework.boot:spring-boot-starter'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+war {
+    manifest {
+        attributes(
+                'group': 'io.zephyr.tutorials',
+                'name': 'map-reduce',
+                'version': '1.0.0-SNAPSHOT',
+                'description': 'map-reduce example',
+                'type': 'plugin'
+        )
+    }
+}

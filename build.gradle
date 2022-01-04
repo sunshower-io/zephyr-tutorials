@@ -34,6 +34,18 @@ subprojects {
     
     dependencies {
         compileOnly "io.zephyr:kernel-api"
+        compileOnly "io.zephyr:gyre-api:2.0.83-SNAPSHOT"
+
+        [
+                'kernel-test',
+                'kernel-test-common'
+        ].each {
+            testImplementation("io.zephyr:$it")
+        }
+
+        testImplementation 'org.springframework:spring-test'
+        testImplementation 'org.junit.jupiter:junit-jupiter-engine'
+        
     }
     
 }
