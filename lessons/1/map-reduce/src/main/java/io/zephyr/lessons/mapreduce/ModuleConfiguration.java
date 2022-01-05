@@ -15,7 +15,7 @@ public class ModuleConfiguration {
 
   @Bean
   public WorkerPool workerPool(MapReduceOptions options) {
-    return new ExecutorWorkerPool(Executors.newFixedThreadPool(options.getConcurrency()),
+    return new ExecutorWorkerPool(Executors.newFixedThreadPool(options.getConcurrency() + 1),
         Executors.newFixedThreadPool(2));
   }
 
@@ -39,8 +39,9 @@ public class ModuleConfiguration {
   }
 
   @Bean
-  public FileCountService fileCountService(Scheduler<String> scheduler, MapReduceOptions options) {
-    return new GyreFileCountService(options, scheduler);
+  public FileCountService fileCountService(WorkerPool workerPool, Scheduler<String> scheduler,
+      MapReduceOptions options) {
+    return new GyreFileCountService(workerPool, options, scheduler);
   }
 
 }

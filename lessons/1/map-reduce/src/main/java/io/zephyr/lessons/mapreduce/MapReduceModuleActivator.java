@@ -2,16 +2,23 @@ package io.zephyr.lessons.mapreduce;
 
 import io.zephyr.api.ModuleActivator;
 import io.zephyr.api.ModuleContext;
+import java.util.Arrays;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 public class MapReduceModuleActivator implements ModuleActivator {
 
-  static String[] args;
+  private final String[] args;
   private ConfigurableApplicationContext context;
 
+  public MapReduceModuleActivator(String[] args) {
+    System.out.println("Running with args: " + Arrays.toString(args));
+    this.args = args;
+
+  }
+
   public static void main(String[] args) throws Exception {
-    MapReduceModuleActivator.args = args;
+    new MapReduceModuleActivator(args).start(null);
   }
 
   @Override

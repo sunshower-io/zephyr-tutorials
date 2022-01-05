@@ -43,4 +43,18 @@ class MapReduceModuleActivatorTest {
     service.run(scope);
   }
 
+
+  @Test
+  void ensureMapReduceWorksWithTestFile_large(@Autowired FileCountService service,
+      @Autowired MapReduceOptions options) throws Exception {
+    var outputDirectory = Tests.createTemp();
+    var scope = Scope.root();
+    scope.set("output-directory", outputDirectory);
+    scope.set("count", 32);
+//    scope.set("file", ClassLoader.getSystemResource("files/test").toURI().toURL().getFile());
+    scope.set("file", "/home/josiah/Downloads/prg/inputfile");
+    service.run(scope);
+    // 82200001
+    // 68600001
+  }
 }

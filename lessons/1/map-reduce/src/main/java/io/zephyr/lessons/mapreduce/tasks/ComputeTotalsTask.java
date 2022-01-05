@@ -20,6 +20,9 @@ public class ComputeTotalsTask extends Task {
     var results = new HashMap<String, Integer>();
     for (int i = 0; i < count; i++) {
       Map<String, Integer> taskCounts = scope.get("word-count" + i);
+      if(taskCounts == null) {
+        continue;
+      }
       for (var entry : taskCounts.entrySet()) {
         results.compute(entry.getKey(),
             (k, v) -> v == null ? entry.getValue() : v + entry.getValue());
@@ -30,6 +33,9 @@ public class ComputeTotalsTask extends Task {
   }
 
   private void writeAll(File o, HashMap<String, Integer> results) {
+    if(o == null) {
+      throw new IllegalArgumentException("Outut directory must not be null");
+    }
     var file = new File(o, "word-counts.txt");
     if (!file.exists()) {
       try {
@@ -44,6 +50,9 @@ public class ComputeTotalsTask extends Task {
     }
     try (var fwriter = new FileWriter(file)) {
       for (var entry : results.entrySet()) {
+        if(entry.getValue() == 1) {
+          continue;
+        }
         fwriter.write(entry.getKey());
         fwriter.write(":");
         fwriter.write(String.valueOf(entry.getValue()));
