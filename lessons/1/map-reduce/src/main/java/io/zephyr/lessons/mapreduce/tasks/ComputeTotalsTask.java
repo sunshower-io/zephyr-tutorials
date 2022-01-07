@@ -2,6 +2,7 @@ package io.zephyr.lessons.mapreduce.tasks;
 
 import io.sunshower.gyre.Scope;
 import io.zephyr.kernel.concurrency.Task;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,10 +18,10 @@ public class ComputeTotalsTask extends Task {
   @Override
   public TaskValue run(Scope scope) {
     int count = scope.get("count");
-    var results = new HashMap<String, Integer>();
+    var results = new HashMap<String, Long>();
     for (int i = 0; i < count; i++) {
-      Map<String, Integer> taskCounts = scope.get("word-count" + i);
-      if(taskCounts == null) {
+      Map<String, Long> taskCounts = scope.get("word-count" + i);
+      if (taskCounts == null) {
         continue;
       }
       for (var entry : taskCounts.entrySet()) {
@@ -32,8 +33,8 @@ public class ComputeTotalsTask extends Task {
     return null;
   }
 
-  private void writeAll(File o, HashMap<String, Integer> results) {
-    if(o == null) {
+  private void writeAll(File o, HashMap<String, Long> results) {
+    if (o == null) {
       throw new IllegalArgumentException("Outut directory must not be null");
     }
     var file = new File(o, "word-counts.txt");
@@ -48,9 +49,9 @@ public class ComputeTotalsTask extends Task {
                 .getMessage());
       }
     }
-    try (var fwriter = new FileWriter(file)) {
+    try (var fwriter = new BufferedWriter(new FileWriter(file))) {
       for (var entry : results.entrySet()) {
-        if(entry.getValue() == 1) {
+        if (entry.getValue() == 1) {
           continue;
         }
         fwriter.write(entry.getKey());

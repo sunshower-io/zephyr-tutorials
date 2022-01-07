@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(classes = ModuleConfiguration.class, args = {"-c", "12"})
+@SpringBootTest(classes = ModuleConfiguration.class, args = {"-c", "4"})
 class MapReduceModuleActivatorTest {
 
   @Inject
@@ -50,9 +50,9 @@ class MapReduceModuleActivatorTest {
     var outputDirectory = Tests.createTemp();
     var scope = Scope.root();
     scope.set("output-directory", outputDirectory);
-    scope.set("count", 32);
+    scope.set("count", options.getConcurrency());
 //    scope.set("file", ClassLoader.getSystemResource("files/test").toURI().toURL().getFile());
-    scope.set("file", "/home/josiah/Downloads/prg/inputfile");
+    scope.set("file", "/home/josiah/Downloads/prg/xaa");
     service.run(scope);
     // 82200001
     // 68600001

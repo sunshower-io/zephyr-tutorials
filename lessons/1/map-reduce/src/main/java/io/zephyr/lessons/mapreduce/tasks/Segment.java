@@ -6,7 +6,7 @@ public final class Segment {
   final long end;
   final long start;
 
-  public Segment(int index, long end, long start) {
+  public Segment(int index, long start, long end) {
     this.index = index;
     this.end = end;
     this.start = start;

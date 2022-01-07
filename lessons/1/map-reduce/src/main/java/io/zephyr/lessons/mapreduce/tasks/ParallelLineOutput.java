@@ -2,6 +2,7 @@ package io.zephyr.lessons.mapreduce.tasks;
 
 import io.zephyr.lessons.mapreduce.MapReduceOptions;
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -25,6 +26,7 @@ public class ParallelLineOutput implements Runnable {
   private final BlockingQueue<LineCount> queue;
   private final MapReduceOptions options;
   private final ArrayList<LineOffsetBuffer> offsetBuffers;
+  volatile long totalCount = 0;
 
   /**
    * we can be pretty memory-efficient here.  The index is the index of the line-count task.  Once
@@ -46,7 +48,8 @@ public class ParallelLineOutput implements Runnable {
       if (!file.createNewFile()) {
         throw new IOException("Failed to create file: " + file);
       }
-      var fileOutputStream = new DataOutputStream(new FileOutputStream(file));
+      var fileOutputStream = new DataOutputStream(
+          new BufferedOutputStream(new FileOutputStream(file)));
       var buffer = new LineOffsetBuffer();
       buffer.file = file;
       buffer.currentOffset = 0;
@@ -68,8 +71,28 @@ public class ParallelLineOutput implements Runnable {
             .getMessage());
       }
     }
-
     aggregateAll();
+  }
+
+  private void handle(LineCount take) throws IOException {
+    totalCount++;
+    if (take.finished) {
+      System.out.println("Removing task: " + take.selector);
+      remaining.decrementAndGet();
+    }
+    var buffer = offsetBuffers.get(take.selector);
+    var counts = buffer.counts;
+    if (counts.size() >= options.getLineBufferSize() || take.finished) {
+      long t1 = System.currentTimeMillis();
+      for (int i = 0; i < counts.size(); i++) {
+        buffer.writer.writeInt(counts.get(i));
+      }
+      counts.clear();
+      long t2 = System.currentTimeMillis();
+      System.out.println("Flushed records in " + (t2 - t1) + " ms");
+    } else {
+      buffer.counts.add(take.wordCount);
+    }
   }
 
   private void aggregateAll() {
@@ -85,12 +108,11 @@ public class ParallelLineOutput implements Runnable {
     }
     System.out.println("Writing data...");
     try (var outputs = new BufferedWriter(
-        new FileWriter(file))) {
-
+        new FileWriter(file), 1 << 20)) {
       long lineCount = 0;
       for (int i = 0; i < offsetBuffers.size(); i++) {
         try (var inputStream = new DataInputStream(
-            new BufferedInputStream(new FileInputStream(offsetBuffers.get(i).file)))) {
+            new BufferedInputStream(new FileInputStream(offsetBuffers.get(i).file), 1 << 20))) {
           while (inputStream.available() > 0) {
             outputs.write(Long.toString(lineCount));
             outputs.write(" ");
@@ -105,25 +127,12 @@ public class ParallelLineOutput implements Runnable {
       System.out.println("Encountered error while aggregating lines");
     }
     long t2 = System.currentTimeMillis();
-    System.out.println("Done aggregating line-counts in " + (t2 - t1) + " millis");
+    System.out.println(
+        "Done aggregating line-counts in " + (t2 - t1) + " millis.  Total lines processed: "
+        + totalCount);
   }
 
-  private void handle(LineCount take) throws IOException {
-    if (take.finished) {
-      remaining.decrementAndGet();
-    }
-    var buffer = offsetBuffers.get(take.selector);
-    var counts = buffer.counts;
-    if (counts.size() >= options.getLineBufferSize() || take.finished) {
-      for (int i = 0; i < counts.size(); i++) {
-        buffer.writer.writeInt(counts.get(i));
-      }
-      counts.clear();
-      buffer.writer.flush();
-    } else {
-      buffer.counts.add(take.wordCount);
-    }
-  }
+
 
   static class LineOffsetBuffer {
 

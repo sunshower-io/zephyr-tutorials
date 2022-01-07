@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.LinkedBlockingQueue;
 import javax.inject.Inject;
 
 public class GyreFileCountService implements FileCountService {
@@ -45,7 +44,7 @@ public class GyreFileCountService implements FileCountService {
     /**
      * this really shouldn't ever get very large
      */
-    var queue = new ArrayBlockingQueue<LineCount>(100);
+    var queue = new ArrayBlockingQueue<LineCount>((1 << 16));
     var output = new ParallelLineOutput(queue, options.getConcurrency(),
         outputDirectory, options);
     var future = workerPool.submit(() -> {

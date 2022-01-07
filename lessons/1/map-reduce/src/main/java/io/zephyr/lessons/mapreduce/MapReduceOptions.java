@@ -15,7 +15,7 @@ public class MapReduceOptions {
   private String outputDirectory;
 
 
-  @Option(names = {"-l", "--line-buffer-size"}, defaultValue = "10000")
+  @Option(names = {"-l", "--line-buffer-size"}, defaultValue = "1000000")
   private int lineBufferSize;
 
 

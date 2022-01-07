@@ -49,18 +49,28 @@ public class ComputeSegmentsTask extends Task {
       long testSegmentSize, RandomAccessFile rafile, int i, List<Segment> segments)
       throws IOException {
     rafile.seek(i * testSegmentSize);
-    long count = 0; // number of bits offset
-    for (; ; ) {
-      int r = rafile.read();
-      count++;
-      if (r == -1 || Character.isWhitespace(r)) {
-        if (segments.isEmpty()) {
-          return new Segment(i, testSegmentSize + count, 0);
-        } else {
-          var seg = segments.get(segments.size() - 1);
-          return new Segment(i, (i + 1) * testSegmentSize + count, seg.end + 1);
-        }
+    long count = 0; // number of bytes offset
+    int r = rafile.read();
+    //end of file reached
+    if (r == -1) {
+      if (segments.isEmpty()) {
+        return new Segment(i, 0, testSegmentSize + count);
+      } else {
+        var previousSegment = segments.get(segments.size() - 1);
+        return new Segment(i, previousSegment.end + 1, (i + 1) * testSegmentSize + count);
       }
+    }
+    //increment until newline or EOF.  Windows newlines (CRLF) not expected
+    while (!(r == -1 || r == '\n')) {
+      count++;
+      r = rafile.read();
+    }
+    if (segments.isEmpty()) {
+      return new Segment(i, 0, testSegmentSize + count);
+
+    } else {
+      var seg = segments.get(segments.size() - 1);
+      return new Segment(i, seg.end + 1, (i + 1) * testSegmentSize + count);
     }
   }
 
