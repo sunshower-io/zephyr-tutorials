@@ -142,6 +142,11 @@ public class ParallelLineOutput implements Runnable {
     long currentOffset;
 
     /**
+     * the file we're referring to
+     */
+    File file;
+
+    /**
      * the line-counts where currentLine = currentOffset + idx
      */
     List<Integer> counts;
@@ -149,10 +154,6 @@ public class ParallelLineOutput implements Runnable {
      * the outputstream of this file
      */
     DataOutputStream writer;
-    /**
-     * the file we're referring to
-     */
-    File file;
   }
 
 }
