@@ -1,0 +1,18 @@
+dependencies {
+    compileOnly 'org.springframework.boot:spring-boot-starter'
+}
+def deps = [
+        "service@io.zephyr.tutorials:spring-base:1.0.0-SNAPSHOT"
+].join(',')
+war {
+    manifest {
+        attributes(
+                'group': 'io.zephyr.tutorials',
+                'name': 'test-plugin-3',
+                'version': '1.0.0-SNAPSHOT',
+                'dependencies': deps,
+                'description': 'just a test plugin!',
+                'type': 'plugin'
+        )
+    }
+}
