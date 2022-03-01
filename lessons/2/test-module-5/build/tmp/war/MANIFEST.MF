@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+group: io.zephyr.tutorials
+name: test-plugin-5
+version: 1.0.0-SNAPSHOT
+dependencies: service@io.zephyr.tutorials:test-plugin-1:1.0.0-SNAPSHOT
+description: just a test plugin!
+type: plugin
+

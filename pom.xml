@@ -54,7 +54,7 @@
   </distributionManagement>
   <modules>
     <module>lessons/1/hello-world</module>
-    <module>lessons/1/map-reduce</module>
+    <!-- <module>lessons/1/map-reduce</module> -->
   </modules>
 
   <dependencyManagement>
